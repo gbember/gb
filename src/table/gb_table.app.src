@@ -1,0 +1,15 @@
+{application, gb_table, [
+    {description, "gb_table app."},
+    {id, "gb_table"},
+    {vsn, "0.0.1"},
+    {modules, [
+
+    ]},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {mod,{gb_table_app, []}},
+    {env, []}
+]}.
