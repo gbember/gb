@@ -42,7 +42,13 @@ parse_config_dir(Dir) ->
 -spec parse_config_file(string()) -> 'ok'.
 parse_config_file(FileName) ->
     {CTableName, Opst, List} = file:consult(FileName),
-    ets:new(CTableName, [public, named_table | Opst]),
+    %%没有创建
+    case ets:info(CTableName) =:= 'undefined' of
+        true ->
+            ets:new(CTableName, [public, named_table, {read_concurrency, true}] ++ Opst);
+        false ->
+            ok
+    end,
     case ets:insert_new(CTableName, List) of
         true ->
             ok;
