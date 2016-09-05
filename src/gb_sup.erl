@@ -3,7 +3,7 @@
 %%%
 %%% @end
 %%%-------------------------------------------------------------------
--module(gb_table_sup).
+-module(gb_sup).
 -author("lihuachao").
 
 -behaviour(supervisor).
@@ -48,11 +48,10 @@ start_link() ->
     ignore |
     {error, Reason :: term()}).
 init([]) ->
-    gb_table_var:init(),
-    SupFlags = {'simple_one_for_one', 4, 3600},
-    AChild = {gb_table_server, {gb_table_server, start_link, []},
-        permanent, 10000, worker, [gb_table_server]},
-    {ok, {SupFlags, [AChild]}}.
+    SupFlags = {'one_for_one', 4, 3600},
+    AChilds = [{gb_table_sup, {gb_table_sup, start_link, []},
+        permanent, 10000, supervisor, dynamic}],
+    {ok, {SupFlags, AChilds}}.
 
 %%%===================================================================
 %%% Internal functions

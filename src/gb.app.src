@@ -1,6 +1,6 @@
-{application, gb_table, [
-    {description, "gb_table app."},
-    {id, "gb_table"},
+{application, gb, [
+    {description, "gb app."},
+    {id, "gb"},
     {vsn, "0.0.1"},
     {modules, [
 
@@ -10,6 +10,6 @@
         kernel,
         stdlib
     ]},
-    {mod,{gb_table_app, []}},
+    {mod,{gb_app, []}},
     {env, []}
 ]}.

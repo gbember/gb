@@ -43,4 +43,8 @@ Temporary Items
 .apdisk
 ebin
 .idea
+.rebar
+deps
+log
 gb.iml
+.rebar/erlcinfo

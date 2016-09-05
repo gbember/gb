@@ -3,18 +3,28 @@
 %%%
 %%% @end
 %%%-------------------------------------------------------------------
--module(gb_table_app).
+-module(gb_app).
 -author("lihuachao").
 
 -behaviour(application).
--include("gb_table.hrl").
 %% Application callbacks
 -export([start/2,
     stop/1]).
+-export([start/0]).
 
 %%%===================================================================
 %%% Application callbacks
 %%%===================================================================
+
+%%%-------------------------------------------------------------------
+%%% @doc
+%%%     启动application 用于快捷调用
+%%% @end
+%%%-------------------------------------------------------------------
+-spec start() -> 'ok' | {'error', term()}.
+start() ->
+    lager:start(),
+    application:start(gb).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -27,8 +37,9 @@
     {ok, pid(), State :: term()} |
     {error, Reason :: term()}).
 start(_StartType, _StartArgs) ->
-    case gb_table_sup:start_link() of
+    case gb_sup:start_link() of
         {ok, Pid} ->
+            lager:info("gb application started~n"),
             {ok, Pid};
         Error ->
             Error

@@ -172,6 +172,7 @@ init([TableName, Options]) ->
     TableData = Mod:init(Options),
     TableLock = gb_table_lock:init(),
     gb_table_var:set(TableName, {Mod, TableData}),
+    lager:info("gb_table_server: ~p stard, options: ~p~n",[TableName,Options]),
     {ok, #state{table_name = TableName, table_mod = Mod, table_data = TableData, table_lock = TableLock}}.
 
 %%--------------------------------------------------------------------
@@ -198,6 +199,7 @@ handle_call({'lock', Key, Ref, Ms}, From, #state{table_lock = TableLock} = State
             {noreply, State}
     end;
 handle_call(_Request, _From, State) ->
+    lager:error("invalid call request:~p~n",[_Request]),
     {reply, ok, State}.
 
 %%--------------------------------------------------------------------
@@ -212,6 +214,7 @@ handle_call(_Request, _From, State) ->
     {noreply, NewState :: #state{}, timeout() | hibernate} |
     {stop, Reason :: term(), NewState :: #state{}}).
 handle_cast(_Request, State) ->
+    lager:error("invalid cast request:~p~n",[_Request]),
     {noreply, State}.
 
 %%--------------------------------------------------------------------
@@ -237,6 +240,7 @@ handle_info({'unlock', Key, Ref}, #state{table_lock = TableLock} = State) ->
     end,
     {noreply, State};
 handle_info(_Info, State) ->
+    lager:error("invalid info request:~p~n",[_Info]),
     {noreply, State}.
 
 %%--------------------------------------------------------------------
@@ -252,7 +256,13 @@ handle_info(_Info, State) ->
 %%--------------------------------------------------------------------
 -spec(terminate(Reason :: (normal | shutdown | {shutdown, term()} | term()),
         State :: #state{}) -> term()).
-terminate(_Reason, _State) ->
+terminate(Reason, #state{table_name = TableName}) ->
+    if
+        Reason =:= 'normal' orelse Reason =:= 'shutdown'->
+            ok;
+        true->
+            lager:error("gb_table_server:~p terminate error:~p~n",[TableName,Reason])
+    end,
     ok.
 
 %%--------------------------------------------------------------------
